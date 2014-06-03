@@ -13,34 +13,17 @@ class IScaffoldingRecipe(Interface):
         pass
 
 
-class IRecipeDescription(Interface):
+class IRecipeDescriptive(Interface):
     """ Define a description for each recipe.
     """
 
 
-class IRecipeDescriptionModel(IRecipeDescription):
-    pass
+class IFieldBuilder(Interface):
+    """
+    """
+
+    def __init__(self, recipe, field):
+        pass
     
-
-class IRecipeDescriptionStorage(IRecipeDescription):
-    pass
-
-
-class IRecipeDescriptionForm(IRecipeDescription):
-    pass
-
-
-class IRecipeDescriptionDisplay(IRecipeDescription):
-    pass
-
-
-class IRecipeDescriptionListing(IRecipeDescription):
-    pass
-
-
-class IRecipeDescriptionGeneric(IRecipeDescriptionModel,
-                                IRecipeDescriptionStorage,
-                                IRecipeDescriptionForm,
-                                IRecipeDescriptionDisplay,
-                                IRecipeDescriptionListing):
-    pass
+    def __call__(self):
+        pass

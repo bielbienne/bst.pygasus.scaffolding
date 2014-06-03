@@ -11,7 +11,7 @@ from bb.extjs.core.interfaces import IApplicationContext
 from bb.extjs.wsgi.interfaces import IRequest
 from bb.extjs.wsgi.interfaces import IRootDispatcher
 
-from bb.extjs.scaffolding.interfaces import IRecipeDescription
+from bb.extjs.scaffolding.interfaces import IRecipeDescriptive
 from bb.extjs.scaffolding.interfaces import IScaffoldingRecipe
 
 
@@ -40,11 +40,12 @@ class ScaffoldinglEntryPoint(ext.MultiAdapter):
         recipename, descname = match.groups()
         recipename, descname = recipename.lower(), descname.lower()
         
-        description = queryAdapter(self.context, IRecipeDescription, descname)
+        description = queryAdapter(self.context, IRecipeDescriptive, descname)
         if description is None:
             raise HTTPNotFound('No scaffolding for %s' % descname)
         recipe = queryMultiAdapter((self.context, description), IScaffoldingRecipe, recipename)
         if recipe is None:
             raise Exception('Missing Recipe to generate Exjs %s' % recipename)
         
+        self.request.response.content_type='application/javascript'
         self.request.response.write(recipe())
