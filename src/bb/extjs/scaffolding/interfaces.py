@@ -13,6 +13,26 @@ class IScaffoldingRecipe(Interface):
         pass
 
 
+class IScaffoldingRecipeModel(IScaffoldingRecipe):
+    pass
+
+
+class IScaffoldingRecipeStore(IScaffoldingRecipe):
+    pass
+
+
+class IScaffoldingRecipeForm(IScaffoldingRecipe):
+    pass
+
+
+class IScaffoldingRecipeDisplay(IScaffoldingRecipe):
+    pass
+
+
+class IScaffoldingRecipeGrid(IScaffoldingRecipe):
+    pass
+
+
 class IRecipeDescriptive(Interface):
     """ Define a description for each recipe.
     """
