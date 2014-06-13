@@ -1,5 +1,5 @@
 import json
-from urllib.parse import urlencode
+from urllib.parse import urljoin
 
 from zope.component import getMultiAdapter
 
@@ -46,44 +46,42 @@ class Model(BaseRecipe):
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeStore)
-class Storage(BaseRecipe):
+class Store(BaseRecipe):
     ext.name('store')
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
     
     def __init__(self, context, descriptive):
-        super(Storage, self).__init__(context, descriptive)
+        super(Store, self).__init__(context, descriptive)
         self.model = self.descriptive.classname
 
     def __call__(self):
         modelclass = self.classname(self.context.namespace, 'model', self.model)
         store = dict(extend='Ext.data.Store',
                      requires=modelclass,
-                     autoLoad=False,
+                     autoLoad=True,
                      autoSync=True,
                      storeId=self.descriptive.classname,
                      model=modelclass,
-                     proxy=dict(type='ajax',
+                     batchMode=False,
+                     proxy=dict(type='rest',
                                 pageParam=None,
                                 startParam=None,
                                 limitParam=None,
-                                api=dict(read=self.url('read'),
-                                         update=self.url('update'),
-                                         destroy=self.url('destroy')
-                                         )
-                                ),
+                                url=self.url(),
                                 reader=dict(type='json',
                                             root='data'
                                             ),
                                 writer=dict(type='json',
                                             root='data'
                                             )
+                                ),
                      )
         '%s.store.%s' % (self.context, self.descriptive)
         classname = self.classname(self.context.namespace, 'store', self.descriptive.classname)
         return self.buildclass(classname, store)
 
-    def url(self, crud):
-        return 'data/%s' % urlencode(dict(entity=self.model, crud=crud))
+    def url(self):
+        return 'data/%s' % self.model
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeForm)
@@ -117,15 +115,36 @@ class Grid(BaseRecipe):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
 
     def __call__(self):
+        classname = self.classname(self.context.namespace, 'grid', self.descriptive.classname)
+        return self.buildclass(classname, self.build())
+    
+    def build(self):
         columns = list()
         for name in self.descriptive.fields:
             zfield = self.descriptive.fields.get(name)
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
-        model = dict(extend='Ext.grid.Panel',
-                     storeId=self.descriptive.classname,
+        return dict(extend='Ext.grid.Panel',
+                     store=self.classname(self.context.namespace, 'store', self.descriptive.classname),
                      alias='widget.Grid%s' % self.descriptive.classname,
                      columns=columns,
                      title=self.descriptive.title)
-        '%s.grid.%s' % (self.context, self.descriptive)
-        classname = self.classname(self.context.namespace, 'grid', self.descriptive.classname)
-        return self.buildclass(classname, model)
+
+
+@ext.implementer(interfaces.IScaffoldingRecipeEditGrid)
+class GridEdit(Grid):
+    ext.name('editgrid')
+    ext.provides(interfaces.IScaffoldingRecipeEditGrid)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    
+    def __call__(self):
+        classname = self.classname(self.context.namespace, 'editgrid', self.descriptive.classname)
+        grid = self.build()
+        grid.update(dict(alias='widget.EditGrid%s' % self.descriptive.classname,
+                         plugins=['%plugins%']))
+        output = 'var rowEditing = Ext.create("Ext.grid.plugin.RowEditing");\n'
+        output += self.buildclass(classname, grid)
+        # QD: this may be rewrite with a proper solution
+        output = output.replace('"%plugins%"', 'rowEditing')
+        return output
+
+

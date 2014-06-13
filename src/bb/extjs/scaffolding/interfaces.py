@@ -33,6 +33,10 @@ class IScaffoldingRecipeGrid(IScaffoldingRecipe):
     pass
 
 
+class IScaffoldingRecipeEditGrid(IScaffoldingRecipe):
+    pass
+
+
 class IRecipeDescriptive(Interface):
     """ Define a description for each recipe.
     """
