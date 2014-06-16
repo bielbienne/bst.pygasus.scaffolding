@@ -41,3 +41,7 @@ class IntField(BuilderBaseForm):
         di = self.default()
         di.update(dict(xtype='numberfield'))
         return di
+
+
+class IdField(IntField):
+    ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IId)

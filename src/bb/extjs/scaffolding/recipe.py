@@ -10,6 +10,9 @@ from bb.extjs.core.interfaces import IApplicationContext
 from builtins import super
 
 
+# !!! for this module we use OrderedDict as dict !!!
+from collections import OrderedDict as dict
+
 EXT_DEFINE_CLASS = 'Ext.define("%s", %s);'
 
 
@@ -120,6 +123,7 @@ class Grid(BaseRecipe):
     
     def build(self):
         columns = list()
+        import pdb;pdb.set_trace()
         for name in self.descriptive.fields:
             zfield = self.descriptive.fields.get(name)
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())

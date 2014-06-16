@@ -27,3 +27,6 @@ class IntField(BuilderBase):
         return dict(name=self.field.getName(),
                     type='int',
                     useNull=True)
+
+class IdField(IntField):
+    ext.adapts(IScaffoldingRecipeModel, schema.interfaces.IId)

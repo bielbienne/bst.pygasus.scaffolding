@@ -2,6 +2,7 @@ from zope import schema
 
 from bb.extjs.core import ext
 from bb.extjs.scaffolding.fields import BuilderBase
+from bb.extjs.scaffolding.fields import column
 from bb.extjs.scaffolding.interfaces import IScaffoldingRecipeEditGrid
 
 
@@ -25,10 +26,14 @@ class DateField(DefaultField):
         return di
 
 
-class IntField(DefaultField):
-    ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IInt)
+class FloatField(DefaultField):
+    ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IFloat)
 
     def __call__(self):
         di = super(IntField, self).__call__()
         di.update(dict(field=dict(xtype='numberfield')))
         return di
+
+
+class IdField(column.DefaultField):
+    ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IId)
