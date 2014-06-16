@@ -2,6 +2,7 @@ import json
 from urllib.parse import urljoin
 
 from zope.component import getMultiAdapter
+from zope.schema import getFieldsInOrder
 
 from bb.extjs.core import ext
 from bb.extjs.scaffolding import interfaces
@@ -38,8 +39,7 @@ class Model(BaseRecipe):
 
     def __call__(self):
         fields = list()
-        for name in self.descriptive.fields:
-            zfield = self.descriptive.fields.get(name)
+        for name, zfield in getFieldsInOrder(self.descriptive.fields):
             fields.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         model = dict(extend='Ext.data.Model',
                      fields=fields)
@@ -94,8 +94,7 @@ class Form(BaseRecipe):
 
     def __call__(self):
         items = list()
-        for name in self.descriptive.fields:
-            zfield = self.descriptive.fields.get(name)
+        for name, zfield in getFieldsInOrder(self.descriptive.fields):
             items.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         model = dict(extend='Ext.form.Panel',
                      alias='widget.Form%s' % self.descriptive.classname,
@@ -123,9 +122,7 @@ class Grid(BaseRecipe):
     
     def build(self):
         columns = list()
-        import pdb;pdb.set_trace()
-        for name in self.descriptive.fields:
-            zfield = self.descriptive.fields.get(name)
+        for name, zfield in getFieldsInOrder(self.descriptive.fields):
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         return dict(extend='Ext.grid.Panel',
                      store=self.classname(self.context.namespace, 'store', self.descriptive.classname),
