@@ -109,6 +109,9 @@ class Form(BaseRecipe):
 class Display(BaseRecipe):
     ext.name('display')
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    
+    def __call__(self):
+        raise NotImplementedError('display is not implemented at the moment')
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeGrid)

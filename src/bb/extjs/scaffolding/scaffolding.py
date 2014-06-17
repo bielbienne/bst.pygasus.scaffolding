@@ -2,7 +2,7 @@ import re
 import fanstatic
 from webob.exc import HTTPNotFound
 
-from zope.component import queryAdapter
+from zope.component import queryUtility
 from zope.component import queryMultiAdapter
 
 from bb.extjs.core import ext
@@ -40,10 +40,10 @@ class ScaffoldinglEntryPoint(ext.MultiAdapter):
         recipename, descname = match.groups()
         recipename, descname = recipename.lower(), descname.lower()
         
-        description = queryAdapter(self.context, IRecipeDescriptive, descname)
-        if description is None:
+        descriptive = queryUtility(IRecipeDescriptive, descname)
+        if descriptive is None:
             raise HTTPNotFound('No scaffolding for %s' % descname)
-        recipe = queryMultiAdapter((self.context, description), IScaffoldingRecipe, recipename)
+        recipe = queryMultiAdapter((self.context, descriptive), IScaffoldingRecipe, recipename)
         if recipe is None:
             raise Exception('Missing Recipe to generate Exjs %s' % recipename)
         
