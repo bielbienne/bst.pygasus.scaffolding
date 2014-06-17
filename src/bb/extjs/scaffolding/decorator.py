@@ -32,6 +32,3 @@ class ScaffoldingDescriptiveUtility(object):
         self.classname = classname
         self.title = title
         self.fields = fields
-
-
-

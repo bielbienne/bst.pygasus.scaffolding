@@ -66,10 +66,11 @@ class Store(BaseRecipe):
                      storeId=self.descriptive.classname,
                      model=modelclass,
                      batchMode=False,
+                     pageSize=100,
+                     remoteSort=True,
+                     buffered=True,
                      proxy=dict(type='rest',
                                 pageParam=None,
-                                startParam=None,
-                                limitParam=None,
                                 url=self.url(),
                                 reader=dict(type='json',
                                             root='data'
@@ -128,6 +129,7 @@ class Grid(BaseRecipe):
         for name, zfield in getFieldsInOrder(self.descriptive.fields):
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         return dict(extend='Ext.grid.Panel',
+                     requires=self.classname(self.context.namespace, 'store', self.descriptive.classname),
                      store=self.classname(self.context.namespace, 'store', self.descriptive.classname),
                      alias='widget.Grid%s' % self.descriptive.classname,
                      columns=columns,
