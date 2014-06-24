@@ -14,8 +14,8 @@ from builtins import super
 # !!! for this module we use OrderedDict as dict !!!
 from collections import OrderedDict as dict
 
+CLASS_NAMESPACE = 'scaffolding'
 EXT_DEFINE_CLASS = 'Ext.define("%s", %s);'
-
 
 class BaseRecipe(ext.MultiAdapter):
     ext.baseclass()
@@ -44,7 +44,7 @@ class Model(BaseRecipe):
         model = dict(extend='Ext.data.Model',
                      fields=fields)
         '%s.model.%s' % (self.context, self.descriptive)
-        classname = self.classname(self.context.namespace, 'model', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, 'model', self.descriptive.classname)
         return self.buildclass(classname, model)
 
 
@@ -58,8 +58,9 @@ class Store(BaseRecipe):
         self.model = self.descriptive.classname
 
     def __call__(self):
-        modelclass = self.classname(self.context.namespace, 'model', self.model)
+        modelclass = self.classname(CLASS_NAMESPACE, 'model', self.model)
         store = dict(extend='Ext.data.Store',
+                     alias=self.descriptive.classname,
                      requires=modelclass,
                      autoLoad=True,
                      autoSync=True,
@@ -68,7 +69,9 @@ class Store(BaseRecipe):
                      batchMode=False,
                      pageSize=100,
                      remoteSort=True,
-                     buffered=True,
+                     # seems to be very buggy
+                     # http://www.sencha.com/forum/showthread.php?267654-Buffered-store-findRecord-does-not-work-in-4.2.1
+                     buffered=False,
                      proxy=dict(type='rest',
                                 pageParam=None,
                                 url=self.url(),
@@ -81,7 +84,7 @@ class Store(BaseRecipe):
                                 ),
                      )
         '%s.store.%s' % (self.context, self.descriptive)
-        classname = self.classname(self.context.namespace, 'store', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, 'store', self.descriptive.classname)
         return self.buildclass(classname, store)
 
     def url(self):
@@ -102,7 +105,7 @@ class Form(BaseRecipe):
                      items=items,
                      title=self.descriptive.title)
         '%s.form.%s' % (self.context, self.descriptive)
-        classname = self.classname(self.context.namespace, 'form', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, 'form', self.descriptive.classname)
         return self.buildclass(classname, model)
 
 
@@ -121,7 +124,7 @@ class Grid(BaseRecipe):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
 
     def __call__(self):
-        classname = self.classname(self.context.namespace, 'grid', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, 'grid', self.descriptive.classname)
         return self.buildclass(classname, self.build())
     
     def build(self):
@@ -129,8 +132,8 @@ class Grid(BaseRecipe):
         for name, zfield in getFieldsInOrder(self.descriptive.fields):
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         return dict(extend='Ext.grid.Panel',
-                     requires=self.classname(self.context.namespace, 'store', self.descriptive.classname),
-                     store=self.classname(self.context.namespace, 'store', self.descriptive.classname),
+                     requires=self.classname(CLASS_NAMESPACE, 'store', self.descriptive.classname),
+                     store=self.classname(CLASS_NAMESPACE, 'store', self.descriptive.classname),
                      alias='widget.Grid%s' % self.descriptive.classname,
                      columns=columns,
                      title=self.descriptive.title)
@@ -143,7 +146,7 @@ class GridEdit(Grid):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
     
     def __call__(self):
-        classname = self.classname(self.context.namespace, 'editgrid', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, 'editgrid', self.descriptive.classname)
         grid = self.build()
         grid.update(dict(alias='widget.EditGrid%s' % self.descriptive.classname,
                          plugins=['%plugins%']))
