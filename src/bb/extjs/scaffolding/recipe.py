@@ -140,7 +140,7 @@ class Grid(BaseRecipe):
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeEditGrid)
-class GridEdit(Grid):
+class EditGrid(Grid):
     ext.name('editgrid')
     ext.provides(interfaces.IScaffoldingRecipeEditGrid)
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
