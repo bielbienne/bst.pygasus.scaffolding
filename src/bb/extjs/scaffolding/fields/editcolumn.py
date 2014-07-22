@@ -16,6 +16,15 @@ class DefaultField(BuilderBase):
                     field=dict(xtype='textfield'))
 
 
+class PasswordField(DefaultField):
+    ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IPassword)
+
+    def __call__(self):
+        di = super(PasswordField, self).__call__()
+        di.update(dict(inputType='password'))
+        return di
+
+
 class DateField(DefaultField):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IDate)
 
@@ -37,3 +46,4 @@ class FloatField(DefaultField):
 
 class IdField(column.DefaultField):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IId)
+

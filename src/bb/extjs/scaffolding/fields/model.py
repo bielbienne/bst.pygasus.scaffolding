@@ -33,5 +33,12 @@ class IntField(ModelBuilderBase):
     def __call__(self):
         return self.base(dict(type='int'))
 
+
+class BoolField(ModelBuilderBase):
+    ext.adapts(IScaffoldingRecipeModel, schema.interfaces.IBool)
+    def __call__(self):
+        return self.base(dict(type='boolean'))
+
+
 class IdField(IntField):
     ext.adapts(IScaffoldingRecipeModel, schema.interfaces.IId)

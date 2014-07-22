@@ -28,12 +28,29 @@ class StringField(BuilderBaseForm):
         return di
 
 
+class PasswordField(StringField):
+    ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IPassword)
+    def __call__(self):
+        di = super(PasswordField, self).__call__()
+        di.update(dict(inputType='password'))
+        return di
+
+
 class DateField(BuilderBaseForm):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IDate)
     def __call__(self):
         di = self.default()
         di.update(dict(xtype='datefield'))
         return di
+
+
+class CheckboxField(BuilderBaseForm):
+    ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IBool)
+    def __call__(self):
+        di = self.default()
+        di.update(dict(xtype='checkboxfield'))
+        return di
+
 
 class IntField(BuilderBaseForm):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IInt)
