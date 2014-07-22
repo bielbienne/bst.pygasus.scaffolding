@@ -43,7 +43,7 @@ class ScaffoldinglEntryPoint(ext.MultiAdapter):
         descriptive = queryUtility(IRecipeDescriptive, descname)
         if descriptive is None:
             raise HTTPNotFound('No scaffolding for %s' % descname)
-        recipe = queryMultiAdapter((self.context, descriptive), IScaffoldingRecipe, recipename)
+        recipe = queryMultiAdapter((self.context, descriptive, self.request,), IScaffoldingRecipe, recipename)
         if recipe is None:
             raise Exception('Missing Recipe to generate Exjs %s' % recipename)
         

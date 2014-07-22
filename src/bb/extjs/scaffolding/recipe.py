@@ -7,6 +7,7 @@ from zope.schema import getFieldsInOrder
 from bb.extjs.core import ext
 from bb.extjs.scaffolding import interfaces
 from bb.extjs.wsgi.interfaces import IRequest
+from bb.extjs.core.interfaces import IBaseUrl
 from bb.extjs.core.interfaces import IApplicationContext
 from builtins import super
 
@@ -21,9 +22,10 @@ class BaseRecipe(ext.MultiAdapter):
     ext.baseclass()
     ext.adapts()
 
-    def __init__(self, context, descriptive):
+    def __init__(self, context, descriptive, request):
         self.context = context
         self.descriptive = descriptive
+        self.request = request
 
     def buildclass(self, name, extclass):
         return EXT_DEFINE_CLASS % (name, json.dumps(extclass, indent=' '*4),)
@@ -35,7 +37,7 @@ class BaseRecipe(ext.MultiAdapter):
 @ext.implementer(interfaces.IScaffoldingRecipeModel)
 class Model(BaseRecipe):
     ext.name('model')
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
         fields = list()
@@ -51,10 +53,10 @@ class Model(BaseRecipe):
 @ext.implementer(interfaces.IScaffoldingRecipeStore)
 class Store(BaseRecipe):
     ext.name('store')
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
     
-    def __init__(self, context, descriptive):
-        super(Store, self).__init__(context, descriptive)
+    def __init__(self, context, descriptive, request):
+        super(Store, self).__init__(context, descriptive, request)
         self.model = self.descriptive.classname
 
     def __call__(self):
@@ -88,13 +90,13 @@ class Store(BaseRecipe):
         return self.buildclass(classname, store)
 
     def url(self):
-        return 'data/%s' % self.model
+        return IBaseUrl(self.request).url('data/%s' % self.model)
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeForm)
 class Form(BaseRecipe):
     ext.name('form')
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
         items = list()
@@ -112,7 +114,7 @@ class Form(BaseRecipe):
 @ext.implementer(interfaces.IScaffoldingRecipeDisplay)
 class Display(BaseRecipe):
     ext.name('display')
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
     
     def __call__(self):
         raise NotImplementedError('display is not implemented at the moment')
@@ -121,7 +123,7 @@ class Display(BaseRecipe):
 @ext.implementer(interfaces.IScaffoldingRecipeGrid)
 class Grid(BaseRecipe):
     ext.name('grid')
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
         classname = self.classname(CLASS_NAMESPACE, 'grid', self.descriptive.classname)
@@ -143,7 +145,7 @@ class Grid(BaseRecipe):
 class EditGrid(Grid):
     ext.name('editgrid')
     ext.provides(interfaces.IScaffoldingRecipeEditGrid)
-    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive)
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
     
     def __call__(self):
         classname = self.classname(CLASS_NAMESPACE, 'editgrid', self.descriptive.classname)

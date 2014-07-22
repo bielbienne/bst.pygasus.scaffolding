@@ -6,7 +6,7 @@ class IScaffoldingRecipe(Interface):
         elements, like extjs store, model..
     """
     
-    def __init__(self, context, description):
+    def __init__(self, context, description, request):
         pass
     
     def __call__(self):
