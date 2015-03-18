@@ -1,4 +1,5 @@
 from zope import schema
+from zope.i18n import translate
 
 from bb.extjs.core import ext
 from bb.extjs.scaffolding.fields import BuilderBase
@@ -12,7 +13,7 @@ class DefaultField(BuilderBase):
 
     def __call__(self):
         return dict(dataIndex=self.field.getName(),
-                    text=self.field.title,
+                    text=translate(self.field.title, context=self.recipe.request),
                     field=dict(xtype='textfield'))
 
 

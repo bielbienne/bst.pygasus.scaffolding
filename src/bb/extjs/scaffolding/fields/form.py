@@ -1,4 +1,5 @@
 from zope import schema
+from zope.i18n import translate
 
 from bb.extjs.core import ext
 from bb.extjs.scaffolding.fields import BuilderBase
@@ -10,7 +11,7 @@ class BuilderBaseForm(BuilderBase):
 
     def default(self):
         return dict(name=self.field.getName(),
-                    fieldLabel=self.field.title,
+                    fieldLabel=translate(self.field.title, context=self.recipe.request),
                     emptyText=self.field.default,
                     allowBlank=self.field.required
                     )
