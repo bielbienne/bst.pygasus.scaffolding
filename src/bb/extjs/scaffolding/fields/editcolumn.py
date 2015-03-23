@@ -36,6 +36,16 @@ class DateField(DefaultField):
         return di
 
 
+class TimeField(DefaultField):
+    ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.ITime)
+
+    def __call__(self):
+        di = super(DateField, self).__call__()
+        di.update(dict(dict(field=dict(xtype='timefield')),
+                       dateFormat='H:i:s.u'))
+        return di
+
+
 class FloatField(DefaultField):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IFloat)
 

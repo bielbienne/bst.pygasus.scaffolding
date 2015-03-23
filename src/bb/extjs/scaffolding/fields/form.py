@@ -45,6 +45,14 @@ class DateField(BuilderBaseForm):
         return di
 
 
+class TimeField(BuilderBaseForm):
+    ext.adapts(IScaffoldingRecipeForm, schema.interfaces.ITime)
+    def __call__(self):
+        di = self.default()
+        di.update(dict(xtype='timefield'))
+        return di
+
+
 class CheckboxField(BuilderBaseForm):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IBool)
     def __call__(self):
