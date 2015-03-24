@@ -31,7 +31,7 @@ class DateField(ModelBuilderBase):
 class TimeField(ModelBuilderBase):
     ext.adapts(IScaffoldingRecipeModel, schema.interfaces.ITime)
     def __call__(self):
-        return self.base(dict(type='time',
+        return self.base(dict(type='date',
                               dateFormat='H:i:s.u'))
 
 
