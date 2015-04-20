@@ -76,6 +76,7 @@ class Store(BaseRecipe):
                      buffered=False,
                      proxy=dict(type='rest',
                                 pageParam=None,
+                                batchActions=True,
                                 url=self.url(),
                                 reader=dict(type='json',
                                             root='data'
