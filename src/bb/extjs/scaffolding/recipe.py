@@ -94,17 +94,18 @@ class Store(BaseRecipe):
         return IBaseUrl(self.request).url('data/%s' % self.model)
 
 
-@ext.implementer(interfaces.IScaffoldingRecipeForm)
-class Form(BaseRecipe):
-    ext.name('form')
+class BaseForm(BaseRecipe):
+    ext.baseclass()
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
+
+    aliasprefix = 'Form'
 
     def __call__(self):
         items = list()
         for name, zfield in getFieldsInOrder(self.descriptive.fields):
             items.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         model = dict(extend='Ext.form.Panel',
-                     alias='widget.Form%s' % self.descriptive.classname,
+                     alias='widget.%s%s' % (self.aliasprefix, self.descriptive.classname),
                      items=items,
                      title=self.descriptive.title)
         '%s.form.%s' % (self.context, self.descriptive)
@@ -112,13 +113,18 @@ class Form(BaseRecipe):
         return self.buildclass(classname, model)
 
 
+@ext.implementer(interfaces.IScaffoldingRecipeForm)
+class Form(BaseForm):
+    ext.name('form')
+    ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
+
+
 @ext.implementer(interfaces.IScaffoldingRecipeDisplay)
-class Display(BaseRecipe):
+class Display(BaseForm):
     ext.name('display')
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
-    
-    def __call__(self):
-        raise NotImplementedError('display is not implemented at the moment')
+
+    aliasprefix = 'Display'
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeGrid)
