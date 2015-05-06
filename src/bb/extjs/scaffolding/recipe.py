@@ -109,7 +109,7 @@ class BaseForm(BaseRecipe):
                      items=items,
                      title=self.descriptive.title)
         '%s.form.%s' % (self.context, self.descriptive)
-        classname = self.classname(CLASS_NAMESPACE, 'form', self.descriptive.classname)
+        classname = self.classname(CLASS_NAMESPACE, self.aliasprefix.lower(), self.descriptive.classname)
         return self.buildclass(classname, model)
 
 
