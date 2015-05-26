@@ -28,7 +28,7 @@ class ScaffoldingDecorator(object):
 @implementer(IRecipeDescriptive)
 class ScaffoldingDescriptiveUtility(object):
     
-    def __init__(self, classname, fields, title):
+    def __init__(self, classname, interface, title):
         self.classname = classname
+        self.interface = interface
         self.title = title
-        self.fields = fields

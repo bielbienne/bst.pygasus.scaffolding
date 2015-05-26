@@ -50,7 +50,7 @@ class FloatField(DefaultField):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IFloat)
 
     def __call__(self):
-        di = super(IntField, self).__call__()
+        di = super(FloatField, self).__call__()
         di.update(dict(field=dict(xtype='numberfield')))
         return di
 

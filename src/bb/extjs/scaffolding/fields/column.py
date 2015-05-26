@@ -39,7 +39,7 @@ class FloatField(DefaultField):
     ext.adapts(IScaffoldingRecipeGrid, schema.interfaces.IFloat)
 
     def __call__(self):
-        di = super(IntField, self).__call__()
+        di = super(FloatField, self).__call__()
         di.update(dict(xtype= 'numbercolumn'))
         return di
 

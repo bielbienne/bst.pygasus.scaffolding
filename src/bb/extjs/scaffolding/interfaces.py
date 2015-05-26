@@ -21,6 +21,10 @@ class IScaffoldingRecipeStore(IScaffoldingRecipe):
     pass
 
 
+class IScaffoldingRecipeBufferedStore(IScaffoldingRecipe):
+    pass
+
+
 class IScaffoldingRecipeForm(IScaffoldingRecipe):
     pass
 

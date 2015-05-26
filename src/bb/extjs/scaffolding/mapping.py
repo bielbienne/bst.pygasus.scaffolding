@@ -12,6 +12,11 @@ class StoreClassPathMapping(ext.ClassPathMapping):
     path='scaffolding/store'
 
 
+class BufferedStoreClassPathMapping(ext.ClassPathMapping):
+    namespace='scaffolding.bufferedstore'
+    path='scaffolding/bufferedstore'
+
+
 class FormClassPathMapping(ext.ClassPathMapping):
     namespace='scaffolding.form'
     path='scaffolding/form'
