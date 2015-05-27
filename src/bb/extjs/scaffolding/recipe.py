@@ -18,6 +18,7 @@ from collections import OrderedDict as dict
 CLASS_NAMESPACE = 'scaffolding'
 EXT_DEFINE_CLASS = 'Ext.define("%s", %s);'
 
+
 class BaseRecipe(ext.MultiAdapter):
     ext.baseclass()
     ext.adapts()
@@ -28,7 +29,7 @@ class BaseRecipe(ext.MultiAdapter):
         self.request = request
 
     def buildclass(self, name, extclass):
-        return EXT_DEFINE_CLASS % (name, json.dumps(extclass, indent=' '*4),)
+        return EXT_DEFINE_CLASS % (name, json.dumps(extclass, indent=' ' * 4),)
 
     def classname(self, namespace, type, name):
         return '%s.%s.%s' % (namespace, type, name)
@@ -52,35 +53,35 @@ class Model(BaseRecipe):
 class BaseStore(BaseRecipe):
     ext.baseclass()
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
-    
+
     def __init__(self, context, descriptive, request):
         super(BaseStore, self).__init__(context, descriptive, request)
         self.model = self.descriptive.classname
         self.storeattrs = dict(extend='Ext.data.Store',
-                             alias=self.descriptive.classname,
-                             requires='',
-                             autoLoad=True,
-                             autoSync=True,
-                             storeId=self.descriptive.classname,
-                             model='',
-                             batchMode=False,
-                             pageSize=100,
-                             remoteSort=True,
-                             # seems to be very buggy
-                             # http://www.sencha.com/forum/showthread.php?267654-Buffered-store-findRecord-does-not-work-in-4.2.1
-                             buffered=False,
-                             proxy=dict(type='rest',
-                                        pageParam=None,
-                                        batchActions=True,
-                                        url=self.url(),
-                                        reader=dict(type='json',
-                                                    root='data'
-                                                    ),
-                                        writer=dict(type='json',
-                                                    root='data'
-                                                    )
-                                        ),
-                             )
+                               alias=self.descriptive.classname,
+                               requires='',
+                               autoLoad=True,
+                               autoSync=True,
+                               storeId=self.descriptive.classname,
+                               model='',
+                               batchMode=False,
+                               pageSize=100,
+                               remoteSort=True,
+                               # seems to be very buggy
+                               # http://www.sencha.com/forum/showthread.php?267654-Buffered-store-findRecord-does-not-work-in-4.2.1
+                               buffered=False,
+                               proxy=dict(type='rest',
+                                          pageParam=None,
+                                          batchActions=True,
+                                          url=self.url(),
+                                          reader=dict(type='json',
+                                                      root='data'
+                                                      ),
+                                          writer=dict(type='json',
+                                                      root='data'
+                                                      )
+                                          ),
+                               )
 
     def __call__(self):
         modelclass = self.classname(CLASS_NAMESPACE, 'model', self.model)
@@ -156,7 +157,7 @@ class Grid(BaseRecipe):
         classname = self.classname(CLASS_NAMESPACE, 'grid', self.descriptive.classname)
         output = self.buildclass(classname, self.build())
         return self.create_store(output)
-    
+
     def create_store(self, output):
         name = self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
         newstore = 'Ext.create("%s")' % name
@@ -167,11 +168,11 @@ class Grid(BaseRecipe):
         for name, zfield in getFieldsInOrder(self.descriptive.interface):
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         return dict(extend='Ext.grid.Panel',
-                     requires=self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname),
-                     store='%store%',
-                     alias='widget.Grid%s' % self.descriptive.classname,
-                     columns=columns,
-                     title=self.descriptive.title)
+                    requires=self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname),
+                    store='%store%',
+                    alias='widget.Grid%s' % self.descriptive.classname,
+                    columns=columns,
+                    title=self.descriptive.title)
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeEditGrid)
@@ -179,7 +180,7 @@ class EditGrid(Grid):
     ext.name('editgrid')
     ext.provides(interfaces.IScaffoldingRecipeEditGrid)
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
-    
+
     def __call__(self):
         classname = self.classname(CLASS_NAMESPACE, 'editgrid', self.descriptive.classname)
         grid = self.build()
@@ -190,5 +191,3 @@ class EditGrid(Grid):
         # QD: this may be rewrite with a proper solution
         output = output.replace('"%plugins%"', 'rowEditing')
         return self.create_store(output)
-
-

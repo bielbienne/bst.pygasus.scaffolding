@@ -6,7 +6,6 @@ from bb.extjs.scaffolding.fields import BuilderBase
 from bb.extjs.scaffolding.interfaces import IScaffoldingRecipeGrid
 
 
-
 class DefaultField(BuilderBase):
     ext.adapts(IScaffoldingRecipeGrid, schema.interfaces.IField)
 
@@ -20,7 +19,7 @@ class DateField(DefaultField):
 
     def __call__(self):
         di = super(DateField, self).__call__()
-        di.update(dict(xtype= 'datecolumn',
+        di.update(dict(xtype='datecolumn',
                        dateFormat='Y-m-d H:i:s.u'))
         return di
 
@@ -30,7 +29,7 @@ class TimeField(DefaultField):
 
     def __call__(self):
         di = super(DateField, self).__call__()
-        di.update(dict(xtype= 'timecolumn',
+        di.update(dict(xtype='timecolumn',
                        dateFormat='H:i:s.u'))
         return di
 
@@ -40,6 +39,5 @@ class FloatField(DefaultField):
 
     def __call__(self):
         di = super(FloatField, self).__call__()
-        di.update(dict(xtype= 'numbercolumn'))
+        di.update(dict(xtype='numbercolumn'))
         return di
-

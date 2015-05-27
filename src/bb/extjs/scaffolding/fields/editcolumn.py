@@ -7,7 +7,6 @@ from bb.extjs.scaffolding.fields import column
 from bb.extjs.scaffolding.interfaces import IScaffoldingRecipeEditGrid
 
 
-
 class DefaultField(BuilderBase):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IField)
 
@@ -57,4 +56,3 @@ class FloatField(DefaultField):
 
 class IdField(column.DefaultField):
     ext.adapts(IScaffoldingRecipeEditGrid, schema.interfaces.IId)
-

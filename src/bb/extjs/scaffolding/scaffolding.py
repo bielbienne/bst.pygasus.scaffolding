@@ -15,7 +15,6 @@ from bb.extjs.scaffolding.interfaces import IRecipeDescriptive
 from bb.extjs.scaffolding.interfaces import IScaffoldingRecipe
 
 
-
 REGEX_URL = re.compile(r'^\/scaffolding\/([A-z_]*)\/([A-z_]*)\..*')
 
 
@@ -27,25 +26,24 @@ class ScaffoldinglEntryPoint(ext.MultiAdapter):
     """
     ext.name('scaffolding')
     ext.adapts(IApplicationContext, IRequest)
-    
-    
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
-    
+
     def __call__(self):
         match = REGEX_URL.match(self.request.path_info)
         if match is None:
             raise HTTPNotFound()
         recipename, descname = match.groups()
         recipename, descname = recipename.lower(), descname.lower()
-        
+
         descriptive = queryUtility(IRecipeDescriptive, descname)
         if descriptive is None:
             raise HTTPNotFound('No scaffolding for %s' % descname)
         recipe = queryMultiAdapter((self.context, descriptive, self.request,), IScaffoldingRecipe, recipename)
         if recipe is None:
             raise Exception('Missing Recipe to generate Exjs %s' % recipename)
-        
-        self.request.response.content_type='application/javascript'
+
+        self.request.response.content_type = 'application/javascript'
         self.request.response.write(recipe())

@@ -5,10 +5,10 @@ class IScaffoldingRecipe(Interface):
     """ Take the logic to build scaffolding
         elements, like extjs store, model..
     """
-    
+
     def __init__(self, context, description, request):
         pass
-    
+
     def __call__(self):
         pass
 
@@ -52,7 +52,7 @@ class IFieldBuilder(Interface):
 
     def __init__(self, recipe, field):
         pass
-    
+
     def __call__(self):
         pass
 
