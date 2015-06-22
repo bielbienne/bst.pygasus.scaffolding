@@ -9,8 +9,10 @@ from bb.extjs.scaffolding import interfaces
 from bb.extjs.wsgi.interfaces import IRequest
 from bb.extjs.core.interfaces import IBaseUrl
 from bb.extjs.core.interfaces import IApplicationContext
+from bb.extjs.scaffolding import loader
 from builtins import super
 
+from genshi.template import NewTextTemplate
 
 # !!! for this module we use OrderedDict as dict !!!
 from collections import OrderedDict as dict
@@ -33,6 +35,11 @@ class BaseRecipe(ext.MultiAdapter):
 
     def classname(self, namespace, type, name):
         return '%s.%s.%s' % (namespace, type, name)
+
+    def render_template(self, tpl_name):
+        tmpl = loader.load(tpl_name, cls=NewTextTemplate)
+        stream = tmpl.generate(view=self)
+        return stream.render()
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeModel)
@@ -110,6 +117,7 @@ class BufferedStore(BaseStore):
         self.storeattrs['requires'] = modelclass
         self.storeattrs['model'] = modelclass
         self.storeattrs['buffered'] = True
+        self.storeattrs['autoSync'] = False
         self.storeattrs['alias'] = 'Buffered%s' % self.descriptive.classname
         self.storeattrs['storeId'] = 'Buffered%s' % self.descriptive.classname
         classname = self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
@@ -123,15 +131,22 @@ class BaseForm(BaseRecipe):
     aliasprefix = 'Form'
 
     def __call__(self):
+        return self.render_template('form.json.tpl')
+
+    @property
+    def title(self):
+        return self.descriptive.title
+
+    @property
+    def items(self):
         items = list()
         for name, zfield in getFieldsInOrder(self.descriptive.interface):
-            items.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
-        model = dict(extend='Ext.form.Panel',
-                     alias='widget.%s%s' % (self.aliasprefix, self.descriptive.classname),
-                     items=items,
-                     title=self.descriptive.title)
-        classname = self.classname(CLASS_NAMESPACE, self.aliasprefix.lower(), self.descriptive.classname)
-        return self.buildclass(classname, model)
+            items.append(str(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)()))
+        return items
+
+    @property
+    def name(self):
+        return self.classname(CLASS_NAMESPACE, self.aliasprefix.lower(), self.descriptive.classname)
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeForm)
