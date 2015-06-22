@@ -43,6 +43,8 @@ class PasswordField(StringField):
 
     def __call__(self):
         di = super(PasswordField, self).__call__()
+        # super class returns an json string
+        di = json.loads(di)
         di.update(dict(inputType='password'))
         return json.dumps(di, indent=' '*4)
 
