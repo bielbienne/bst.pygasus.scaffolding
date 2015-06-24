@@ -19,7 +19,8 @@ class BuilderBaseForm(BuilderBase):
 
     def default(self):
         return dict(name=self.field.getName(),
-                    fieldLabel=translate(self.field.title, context=self.recipe.request),
+                    fieldLabel=translate(self.field.title,
+                                         context=self.recipe.request),
                     emptyText=self.field.default,
                     allowBlank=not self.field.required
                     )
@@ -35,7 +36,7 @@ class StringField(BuilderBaseForm):
             di['maxLength'] = self.field.max_length
         if self.field.min_length is not None:
             di['minLength'] = self.field.min_length
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class PasswordField(StringField):
@@ -43,10 +44,10 @@ class PasswordField(StringField):
 
     def __call__(self):
         di = super(PasswordField, self).__call__()
-        # super class returns an json string
+        # super class returns a json string
         di = json.loads(di)
         di.update(dict(inputType='password'))
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class DateField(BuilderBaseForm):
@@ -55,7 +56,7 @@ class DateField(BuilderBaseForm):
     def __call__(self):
         di = self.default()
         di.update(dict(xtype='datefield'))
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class TimeField(BuilderBaseForm):
@@ -64,7 +65,7 @@ class TimeField(BuilderBaseForm):
     def __call__(self):
         di = self.default()
         di.update(dict(xtype='timefield'))
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class CheckboxField(BuilderBaseForm):
@@ -73,7 +74,7 @@ class CheckboxField(BuilderBaseForm):
     def __call__(self):
         di = self.default()
         di.update(dict(xtype='checkboxfield'))
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class IntField(BuilderBaseForm):
@@ -82,14 +83,14 @@ class IntField(BuilderBaseForm):
     def __call__(self):
         di = self.default()
         di.update(dict(xtype='numberfield'))
-        return json.dumps(di, indent=' '*4)
+        return json.dumps(di, indent=' ' * 4)
 
 
 class IdField(IntField):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IId)
 
 
-class ComboboxField(BuilderBaseForm):
+class ChoiceField(BuilderBaseForm):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IChoice)
 
     def __call__(self):

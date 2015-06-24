@@ -1,3 +1,4 @@
+import json
 from zope import schema
 from zope.i18n import translate
 
@@ -10,7 +11,9 @@ class BuilderDefaultForm(BuilderBase):
     ext.adapts(IScaffoldingRecipeDisplay, schema.interfaces.IField)
 
     def __call__(self):
-        return dict(xtype='displayfield',
-                    name=self.field.getName(),
-                    fieldLabel=translate(self.field.title, context=self.recipe.request),
-                    )
+        di = dict(xtype='displayfield',
+                  name=self.field.getName(),
+                  fieldLabel=translate(self.field.title,
+                                       context=self.recipe.request)
+                  )
+        return json.dumps(di, indent=' ' * 4)

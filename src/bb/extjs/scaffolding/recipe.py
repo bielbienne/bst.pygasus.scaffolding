@@ -63,42 +63,33 @@ class BaseStore(BaseRecipe):
 
     def __init__(self, context, descriptive, request):
         super(BaseStore, self).__init__(context, descriptive, request)
-        self.model = self.descriptive.classname
-        self.storeattrs = dict(extend='Ext.data.Store',
-                               alias=self.descriptive.classname,
-                               requires='',
-                               autoLoad=True,
-                               autoSync=True,
-                               storeId=self.descriptive.classname,
-                               model='',
-                               batchMode=False,
-                               pageSize=100,
-                               remoteSort=True,
-                               # seems to be very buggy
-                               # http://www.sencha.com/forum/showthread.php?267654-Buffered-store-findRecord-does-not-work-in-4.2.1
-                               buffered=False,
-                               proxy=dict(type='rest',
-                                          pageParam=None,
-                                          batchActions=True,
-                                          url=self.url(),
-                                          reader=dict(type='json',
-                                                      root='data'
-                                                      ),
-                                          writer=dict(type='json',
-                                                      root='data'
-                                                      )
-                                          ),
-                               )
 
     def __call__(self):
-        modelclass = self.classname(CLASS_NAMESPACE, 'model', self.model)
-        self.storeattrs['requires'] = modelclass
-        self.storeattrs['model'] = modelclass
-        classname = self.classname(CLASS_NAMESPACE, 'store', self.descriptive.classname)
-        return self.buildclass(classname, self.storeattrs)
+        return self.render_template('store.json.tpl')
 
+    @property
     def url(self):
-        return IBaseUrl(self.request).url('data/%s' % self.model)
+        return IBaseUrl(self.request).url('data/%s' % self.descriptive.classname)
+
+    @property
+    def name(self):
+        return self.descriptive.classname
+
+    @property
+    def cname(self):
+        return self.classname(CLASS_NAMESPACE, 'store', self.descriptive.classname)
+
+    @property
+    def model(self):
+        return self.classname(CLASS_NAMESPACE, 'model', self.descriptive.classname)
+
+    @property
+    def buffered(self):
+        return False
+
+    @property
+    def autoSync(self):
+        return True
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeStore)
@@ -113,15 +104,23 @@ class BufferedStore(BaseStore):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
-        modelclass = self.classname(CLASS_NAMESPACE, 'model', self.model)
-        self.storeattrs['requires'] = modelclass
-        self.storeattrs['model'] = modelclass
-        self.storeattrs['buffered'] = True
-        self.storeattrs['autoSync'] = False
-        self.storeattrs['alias'] = 'Buffered%s' % self.descriptive.classname
-        self.storeattrs['storeId'] = 'Buffered%s' % self.descriptive.classname
-        classname = self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
-        return self.buildclass(classname, self.storeattrs)
+        return self.render_template('store.json.tpl')
+
+    @property
+    def name(self):
+        return 'Buffered%s' % self.descriptive.classname
+
+    @property
+    def cname(self):
+        return self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
+
+    @property
+    def buffered(self):
+        return True
+
+    @property
+    def autoSync(self):
+        return False
 
 
 class BaseForm(BaseRecipe):
@@ -141,7 +140,7 @@ class BaseForm(BaseRecipe):
     def items(self):
         items = list()
         for name, zfield in getFieldsInOrder(self.descriptive.interface):
-            items.append(str(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)()))
+            items.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
         return items
 
     @property
@@ -169,25 +168,35 @@ class Grid(BaseRecipe):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
-        classname = self.classname(CLASS_NAMESPACE, 'grid', self.descriptive.classname)
-        output = self.buildclass(classname, self.build())
-        return self.create_store(output)
+        return self.render_template('grid.json.tpl')
 
-    def create_store(self, output):
-        name = self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
-        newstore = 'Ext.create("%s")' % name
-        return output.replace('"%store%"', newstore)
+    @property
+    def title(self):
+        return self.descriptive.title
 
-    def build(self):
+    @property
+    def name(self):
+        return self.classname(CLASS_NAMESPACE, 'grid', self.descriptive.classname)
+
+    @property
+    def columns(self):
         columns = list()
         for name, zfield in getFieldsInOrder(self.descriptive.interface):
             columns.append(getMultiAdapter((self, zfield,), interfaces.IFieldBuilder)())
-        return dict(extend='Ext.grid.Panel',
-                    requires=self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname),
-                    store='%store%',
-                    alias='widget.Grid%s' % self.descriptive.classname,
-                    columns=columns,
-                    title=self.descriptive.title)
+        return columns
+
+    @property
+    def alias(self):
+        return 'widget.Grid%s' % self.descriptive.classname
+
+    @property
+    def requires(self):
+        return self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
+
+    @property
+    def store(self):
+        name = self.classname(CLASS_NAMESPACE, 'bufferedstore', self.descriptive.classname)
+        return 'Ext.create("%s")' % name
 
 
 @ext.implementer(interfaces.IScaffoldingRecipeEditGrid)
@@ -197,12 +206,12 @@ class EditGrid(Grid):
     ext.adapts(IApplicationContext, interfaces.IRecipeDescriptive, IRequest)
 
     def __call__(self):
-        classname = self.classname(CLASS_NAMESPACE, 'editgrid', self.descriptive.classname)
-        grid = self.build()
-        grid.update(dict(alias='widget.EditGrid%s' % self.descriptive.classname,
-                         plugins=['%plugins%']))
-        output = 'var rowEditing = Ext.create("Ext.grid.plugin.RowEditing");\n'
-        output += self.buildclass(classname, grid)
-        # QD: this may be rewrite with a proper solution
-        output = output.replace('"%plugins%"', 'rowEditing')
-        return self.create_store(output)
+        return self.render_template('editgrid.json.tpl')
+
+    @property
+    def alias(self):
+        return 'widget.EditGrid%s' % self.descriptive.classname
+
+    @property
+    def name(self):
+        return self.classname(CLASS_NAMESPACE, 'editgrid', self.descriptive.classname)
