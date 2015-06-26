@@ -35,6 +35,7 @@ setup(name='bb.extjs.scaffolding',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'zope.vocabularyregistry',
           # -*- Extra requirements: -*-
       ],
       entry_points="""

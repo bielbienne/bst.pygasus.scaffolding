@@ -2,11 +2,9 @@ import json
 
 from genshi.template import NewTextTemplate
 
-from zope import component
 from zope import schema
 from zope.i18n import translate
-from zope.schema import vocabulary
-from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import getVocabularyRegistry
 
 from bb.extjs.core import ext
 from bb.extjs.scaffolding import loader
@@ -94,19 +92,16 @@ class ChoiceField(BuilderBaseForm):
     ext.adapts(IScaffoldingRecipeForm, schema.interfaces.IChoice)
 
     def __call__(self):
-        # Register the corresponding vocabulary
-        factory = component.getUtility(IVocabularyFactory,
-                                       name=self.field.vocabularyName)
-        vocabular = factory(self.recipe.request)
-        vr = vocabulary.getVocabularyRegistry()
-        vr.register(self.field.vocabularyName, factory)
+        # Get the corresponding vocabulary
+        vr = getVocabularyRegistry()
+        vocabular = vr.get(None, self.field.vocabularyName)
 
         # Get the data to construct the store
         fields = str(['value', 'title'])
         data = list()
         for term in vocabular:
             entry = dict()
-            entry['value'] = str(term.value)
+            entry['value'] = str(term.token)
             entry['title'] = str(term.title)
             data.append(entry)
 
