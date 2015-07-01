@@ -4,12 +4,12 @@ from urllib.parse import urljoin
 from zope.component import getMultiAdapter
 from zope.schema import getFieldsInOrder
 
-from bb.extjs.core import ext
-from bb.extjs.scaffolding import interfaces
-from bb.extjs.wsgi.interfaces import IRequest
-from bb.extjs.core.interfaces import IBaseUrl
-from bb.extjs.core.interfaces import IApplicationContext
-from bb.extjs.scaffolding import loader
+from bst.pygasus.core import ext
+from bst.pygasus.scaffolding import interfaces
+from bst.pygasus.wsgi.interfaces import IRequest
+from bst.pygasus.core.interfaces import IBaseUrl
+from bst.pygasus.core.interfaces import IApplicationContext
+from bst.pygasus.scaffolding import loader
 from builtins import super
 
 from genshi.template import NewTextTemplate

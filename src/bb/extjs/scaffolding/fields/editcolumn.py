@@ -4,12 +4,12 @@ from zope import schema
 from zope.i18n import translate
 from zope.schema.vocabulary import getVocabularyRegistry
 
-from bb.extjs.core import ext
-from bb.extjs.scaffolding import loader
-from bb.extjs.scaffolding.fields import BuilderBase
-from bb.extjs.scaffolding.fields import column
-from bb.extjs.scaffolding.fields import form
-from bb.extjs.scaffolding.interfaces import IScaffoldingRecipeEditGrid
+from bst.pygasus.core import ext
+from bst.pygasus.scaffolding import loader
+from bst.pygasus.scaffolding.fields import BuilderBase
+from bst.pygasus.scaffolding.fields import column
+from bst.pygasus.scaffolding.fields import form
+from bst.pygasus.scaffolding.interfaces import IScaffoldingRecipeEditGrid
 
 from genshi.template import NewTextTemplate
 

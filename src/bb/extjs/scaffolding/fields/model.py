@@ -1,8 +1,8 @@
 from zope import schema
 
-from bb.extjs.core import ext
-from bb.extjs.scaffolding.fields import BuilderBase
-from bb.extjs.scaffolding.interfaces import IScaffoldingRecipeModel
+from bst.pygasus.core import ext
+from bst.pygasus.scaffolding.fields import BuilderBase
+from bst.pygasus.scaffolding.interfaces import IScaffoldingRecipeModel
 
 
 class ModelBuilderBase(BuilderBase):

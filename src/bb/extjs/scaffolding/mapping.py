@@ -1,4 +1,4 @@
-from bb.extjs.core import ext
+from bst.pygasus.core import ext
 
 
 class ModelClassPathMapping(ext.ClassPathMapping):

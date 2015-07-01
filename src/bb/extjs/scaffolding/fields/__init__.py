@@ -1,5 +1,5 @@
-from bb.extjs.core import ext
-from bb.extjs.scaffolding.interfaces import IFieldBuilder
+from bst.pygasus.core import ext
+from bst.pygasus.scaffolding.interfaces import IFieldBuilder
 
 
 @ext.implementer(IFieldBuilder)

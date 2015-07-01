@@ -5,14 +5,14 @@ from webob.exc import HTTPNotFound
 from zope.component import queryUtility
 from zope.component import queryMultiAdapter
 
-from bb.extjs.core import ext
-from bb.extjs.core.interfaces import IApplicationContext
+from bst.pygasus.core import ext
+from bst.pygasus.core.interfaces import IApplicationContext
 
-from bb.extjs.wsgi.interfaces import IRequest
-from bb.extjs.wsgi.interfaces import IRootDispatcher
+from bst.pygasus.wsgi.interfaces import IRequest
+from bst.pygasus.wsgi.interfaces import IRootDispatcher
 
-from bb.extjs.scaffolding.interfaces import IRecipeDescriptive
-from bb.extjs.scaffolding.interfaces import IScaffoldingRecipe
+from bst.pygasus.scaffolding.interfaces import IRecipeDescriptive
+from bst.pygasus.scaffolding.interfaces import IScaffoldingRecipe
 
 
 REGEX_URL = re.compile(r'^\/scaffolding\/([A-z_]*)\/([A-z_]*)\..*')

@@ -2,7 +2,7 @@ from zope import component
 from zope.interface import implementer
 from zope.interface.interface import InterfaceClass
 from zope.interface.exceptions import InvalidInterface
-from bb.extjs.scaffolding.interfaces import IRecipeDescriptive
+from bst.pygasus.scaffolding.interfaces import IRecipeDescriptive
 
 
 class ScaffoldingDecorator(object):
