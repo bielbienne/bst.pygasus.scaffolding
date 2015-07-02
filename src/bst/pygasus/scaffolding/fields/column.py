@@ -68,8 +68,4 @@ class ChoiceField(DefaultField):
     @property
     def terms(self):
         vr = getVocabularyRegistry()
-        vocabular = vr.get(None, self.field.vocabularyName)
-        terms = list()
-        for voc in vocabular:
-            terms.append(voc)
-        return terms
+        return vr.get(None, self.field.vocabularyName)

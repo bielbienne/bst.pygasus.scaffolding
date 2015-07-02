@@ -97,12 +97,12 @@ class ChoiceField(BuilderBaseForm):
         vocabular = vr.get(None, self.field.vocabularyName)
 
         # Get the data to construct the store
-        fields = str(['value', 'title'])
+        fields = ['value', 'title']
         data = list()
         for term in vocabular:
             entry = dict()
-            entry['value'] = str(term.token)
-            entry['title'] = str(term.title)
+            entry['value'] = term.token
+            entry['title'] = term.title
             data.append(entry)
 
         # Attributes for the combobox
@@ -114,7 +114,7 @@ class ChoiceField(BuilderBaseForm):
         self.valueField = 'value'
         self.displayField = 'title'
         self.queryMode = 'local'
-        self.store = "Ext.create('Ext.data.Store', {fields: %s, data: %s})" % (str(fields), str(data))
+        self.store = "Ext.create('Ext.data.Store', {fields: %s, data: %s})" % (json.dumps(fields, indent=' ' * 4), json.dumps(data, indent=' ' * 4))
 
         # Render the template
         tmpl = loader.load('combobox.json.tpl', cls=NewTextTemplate)
