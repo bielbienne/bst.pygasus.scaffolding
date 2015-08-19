@@ -4,11 +4,10 @@
 Changelog
 =========
 
-1.1 (unreleased)
-================
+1.0.2 (unreleased)
+------------------
 
-- Nothing changed yet
-
+- Fixed description in setup.py
 
 1.0.1 (2015-08-03)
 ------------------
